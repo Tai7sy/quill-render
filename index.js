@@ -1,4 +1,4 @@
-const escapeHtml = require('escape-html');
+var escapeHtml = require('escape-html');
 
 exports = module.exports = function (ops) {
   return convert(ops).innerHTML;
@@ -6,11 +6,11 @@ exports = module.exports = function (ops) {
 
 exports.asDOM = convert;
 
-const format = exports.format = {
+var format = exports.format = {
 
   block: {
     image: function (src) {
-      const img = document.createElement('img');
+      var img = document.createElement('img');
       img.src = src;
       this.appendChild(img);
     }
@@ -24,7 +24,7 @@ const format = exports.format = {
       return document.createElement('b');
     },
     link: function (href) {
-      const a = document.createElement('a');
+      var a = document.createElement('a');
       a.href = href;
       return a;
     }
@@ -32,17 +32,17 @@ const format = exports.format = {
 
   lineify: {
     h1: function () {
-      const newElm = document.createElement('h1');
+      var newElm = document.createElement('h1');
       newElm.innerHTML = this.innerHTML;
       this.parentNode.replaceChild(newElm, this);
     },
     h2: function () {
-      const newElm = document.createElement('h2');
+      var newElm = document.createElement('h2');
       newElm.innerHTML = this.innerHTML;
       this.parentNode.replaceChild(newElm, this);
     },
     h3: function () {
-      const newElm = document.createElement('h3');
+      var newElm = document.createElement('h3');
       newElm.innerHTML = this.innerHTML;
       this.parentNode.replaceChild(newElm, this);
     },
@@ -51,7 +51,7 @@ const format = exports.format = {
         return document.createElement('ul');
       },
       line: function () {
-        const newElm = document.createElement('li');
+        var newElm = document.createElement('li');
         newElm.innerHTML = this.innerHTML;
         this.parentNode.replaceChild(newElm, this);
       }
@@ -61,7 +61,7 @@ const format = exports.format = {
         return document.createElement('ol');
       },
       line: function () {
-        const newElm = document.createElement('li');
+        var newElm = document.createElement('li');
         newElm.innerHTML = this.innerHTML;
         this.parentNode.replaceChild(newElm, this);
       }
@@ -71,8 +71,8 @@ const format = exports.format = {
 };
 
 function convert (ops) {
-  const root = document.createElement('div');
-  let group, line, el, activeInline, beginningOfLine;
+  var root = document.createElement('div');
+  var group, line, el, activeInline, beginningOfLine;
 
   function newLine () {
     el = line = document.createElement('p');
@@ -82,10 +82,10 @@ function convert (ops) {
 
   newLine();
 
-  for (let i = 0; i < ops.length; i++) {
-    const op = ops[i];
+  for (var i = 0; i < ops.length; i++) {
+    var op = ops[i];
     if (op.insert === 1) {
-      for (let k in op.attributes) {
+      for (var k in op.attributes) {
         if (format.block[k]) {
           newLine();
           applyStyles(op.attributes);
@@ -94,18 +94,18 @@ function convert (ops) {
         }
       }
     } else {
-      const lines = escapeHtml(op.insert).split('\n');
+      var lines = escapeHtml(op.insert).split('\n');
 
       if (isLinifyable(op.attributes)) {
         // Some line-level styling (ie headings) is applied by inserting a \n
         // with the style; the style applies back to the previous \n.
         // There *should* only be one style in an insert operation.
 
-        for (let j = 1; j < lines.length; j++) {
-          for (let k in op.attributes) {
+        for (var j = 1; j < lines.length; j++) {
+          for (var k in op.attributes) {
             if (format.lineify[k]) {
 
-              let fn = format.lineify[k];
+              var fn = format.lineify[k];
               if (typeof fn == 'object') {
                 if (group && group.type !== k) {
                   group = null;
@@ -135,7 +135,7 @@ function convert (ops) {
         beginningOfLine = true;
 
       } else {
-        for (let j = 0; j < lines.length; j++) {
+        for (var j = 0; j < lines.length; j++) {
           if ((j > 0 || beginningOfLine) && group && ++group.distance >= 2) {
             group = null;
           }
@@ -157,14 +157,14 @@ function convert (ops) {
 
   function applyStyles (attrs, next) {
 
-    const first = [], then = [];
+    var first = [], then = [];
     attrs = attrs || {};
 
-    let tag = el, seen = {};
+    var tag = el, seen = {};
     while (tag._format) {
       seen[tag._format] = true;
       if (!attrs[tag._format]) {
-        for (const k in seen) {
+        for (var k in seen) {
           delete activeInline[k];
         }
         el = tag.parentNode;
@@ -173,7 +173,7 @@ function convert (ops) {
       tag = tag.parentNode;
     }
 
-    for (const k in attrs) {
+    for (var k in attrs) {
       if (format.inline[k]) {
 
         if (activeInline[k]) {
@@ -199,7 +199,7 @@ function convert (ops) {
     then.forEach(apply);
 
     function apply (fmt) {
-      const newEl = format.inline[fmt].call(null, attrs[fmt]);
+      var newEl = format.inline[fmt].call(null, attrs[fmt]);
       newEl._format = fmt;
       el.appendChild(newEl);
       el = newEl;
@@ -210,7 +210,7 @@ function convert (ops) {
 }
 
 function isLinifyable (attrs) {
-  for (const k in attrs) {
+  for (var k in attrs) {
     if (format.lineify[k]) {
       return true;
     }
