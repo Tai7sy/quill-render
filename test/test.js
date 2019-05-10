@@ -1,5 +1,5 @@
-var render = require('../index'),
-	expect = require('chai').expect;
+var render = require('../index');
+var expect = require('chai').expect;
 
 describe('quill-render', function() {
 
@@ -19,7 +19,6 @@ describe('quill-render', function() {
 		.to.equal('<p>Hi <b>mom</b></p>');
 
 	});
-
 
 	it('renders block format', function() {
 
@@ -201,7 +200,7 @@ describe('quill-render', function() {
 				"insert": '<img src=x onerror="doBadThings()">'
 			}
 		]))
-		.to.equal('<p>&lt;img src=x onerror=&quot;doBadThings()&quot;&gt;</p>');
+		.to.equal('<p>&lt;img src=x onerror="doBadThings()"&gt;</p>');
 	});
 
 	it('is XSS safe in images', function() {
@@ -213,6 +212,6 @@ describe('quill-render', function() {
 				"insert": 1,
 			}
 		]))
-		.to.equal('<p></p><p><img src="&quot;&gt;&lt;img src=x onerror=&quot;doBadThings()&quot;&gt;"></p><p></p>');
+		.to.equal('<p></p><p><img src="&quot;><img src=x onerror=&quot;doBadThings()&quot;>"></p><p></p>');
 	});
 });
